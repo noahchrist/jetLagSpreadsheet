@@ -1,0 +1,18 @@
+[
+  {
+    "year": 2022,
+    "results": [
+      { "teamId": "noah", "teamName": "Noah", "place": 1 },
+      { "teamId": "alex", "teamName": "Alex", "place": 2 },
+      { "teamId": "jamie", "teamName": "Jamie", "place": 3 }
+    ]
+  },
+  {
+    "year": 2021,
+    "results": [
+      { "teamId": "alex", "teamName": "Alex", "place": 1 },
+      { "teamId": "jamie", "teamName": "Jamie", "place": 2 },
+      { "teamId": "noah", "teamName": "Noah", "place": 3 }
+    ]
+  }
+]

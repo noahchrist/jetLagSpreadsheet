@@ -1,0 +1,22 @@
+.container {
+  padding: 2rem;
+  background-color: #f4f4f4;
+  font-family: sans-serif;
+}
+
+.season-block {
+  margin-bottom: 2rem;
+}
+
+.standings-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+}
+
+.standings-table th,
+.standings-table td {
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  text-align: left;
+}

@@ -1,0 +1,9 @@
+.team-container {
+  padding: 2rem;
+  background-color: #e9ecef;
+  font-family: sans-serif;
+}
+
+.team-container h1 {
+  margin-bottom: 1rem;
+}
