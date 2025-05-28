@@ -150,7 +150,7 @@
     "dynastyActive": true
   },
   {
-    "id": "benny_g",
+    "id": "bennyg",
     "owner": "Benny G",
     "redraftName": "Team bengriffith26",
     "dynastyName": "Stat Boys",
@@ -313,5 +313,50 @@
     "notes": "",
     "redraftActive": false,
     "dynastyActive": false
-  }
+  },
+  {
+    "id": "anthony",
+    "owner": "Anthony",
+    "redraftName": "",
+    "dynastyName": "",
+    "logo": "",
+    "joinedYear": "",
+    "rivalOwner": "",
+    "primaryColor": "",
+    "secondaryColor": "",
+    "slug": "",
+    "notes": "",
+    "redraftActive": false,
+    "dynastyActive": false
+  },
+  {
+    "id": "tapia",
+    "owner": "Tapia",
+    "redraftName": "",
+    "dynastyName": "",
+    "logo": "",
+    "joinedYear": "",
+    "rivalOwner": "",
+    "primaryColor": "",
+    "secondaryColor": "",
+    "slug": "",
+    "notes": "",
+    "redraftActive": false,
+    "dynastyActive": false
+  },
+  {
+    "id": "blazej",
+    "owner": "Blazej",
+    "redraftName": "",
+    "dynastyName": "",
+    "logo": "",
+    "joinedYear": "",
+    "rivalOwner": "",
+    "primaryColor": "",
+    "secondaryColor": "",
+    "slug": "",
+    "notes": "",
+    "redraftActive": false,
+    "dynastyActive": false
+  }    
 ]
