@@ -12,10 +12,10 @@ function PlayoffFinishGraph({ results }) {
     r.place > 12 ? 12 : r.place
   );
 
-  // SVG dimensions (expanded 1.5x, with less bottom space for labels)
+  // SVG dimensions (logical, not physical)
   const height = 420;
   const padding = 60;
-  const bottomExtra = 50; // reduced for less gap below graph
+  const bottomExtra = 50;
   const width = Math.max(600, results.length * 60);
 
   // Y scale: 1st place at top, 12th at bottom
@@ -37,70 +37,87 @@ function PlayoffFinishGraph({ results }) {
   const yLabels = Array.from({ length: 12 }, (_, i) => i + 1);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 60, marginBottom: 20 }}>
-      <svg width={width} height={height} style={{ background: '#003366', borderRadius: 8 }}>
-        {/* Y axis grid and labels */}
-        {yLabels.map(i => (
-          <g key={i}>
-            <line
-              x1={padding - 5}
-              x2={width - padding + 5}
-              y1={yScale(i)}
-              y2={yScale(i)}
-              stroke="#fff2"
-              strokeDasharray="2,4"
-            />
-            <text
-              x={padding - 20}
-              y={yScale(i) + 5}
-              fill="#fff"
-              fontSize={16}
-              textAnchor="end"
-            >
-              {i}
-            </text>
-          </g>
-        ))}
-        {/* Line connecting points */}
-        <polyline
-          fill="none"
-          stroke="#FFD700"
-          strokeWidth={4}
-          points={points.map(pt => `${pt.x},${pt.y}`).join(' ')}
-        />
-        {/* Points */}
-        {points.map((pt, idx) => (
-          <g key={idx}>
-            <circle cx={pt.x} cy={pt.y} r={10} fill="#FFD700" stroke="#fff" strokeWidth={3} />
-            <text
-              x={pt.x}
-              y={pt.y - 16}
-              fill="#fff"
-              fontSize={18}
-              textAnchor="middle"
-              fontWeight="bold"
-            >
-              {pt.place}
-            </text>
-          </g>
-        ))}
-        {/* X axis labels (years/leagues) at a slant, close to graph */}
-        {points.map((pt, idx) => (
-          <g key={idx}>
-            <text
-              x={pt.x + 10} // shift label 10px to the right to better align with the point
-              y={height - bottomExtra}
-              fill="#fff"
-              fontSize={16}
-              textAnchor="start"
-              transform={`rotate(-35,${pt.x - 5},${height - bottomExtra + 50})`}
-              style={{ pointerEvents: 'none' }}
-            >
-              {pt.year} {pt.league[0].toUpperCase()}
-            </text>
-          </g>
-        ))}
-      </svg>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        marginTop: 60,
+        marginBottom: 20,
+        width: '100%',
+        overflowX: 'auto',
+      }}
+    >
+      <div style={{ width: '100%', maxWidth: 700 }}>
+        <svg
+          viewBox={`0 0 ${width} ${height}`}
+          width="100%"
+          height="auto"
+          style={{ background: '#003366', borderRadius: 8, display: 'block', width: '100%', height: 'auto' }}
+        >
+          {/* Y axis grid and labels */}
+          {yLabels.map(i => (
+            <g key={i}>
+              <line
+                x1={padding - 5}
+                x2={width - padding + 5}
+                y1={yScale(i)}
+                y2={yScale(i)}
+                stroke="#fff2"
+                strokeDasharray="2,4"
+              />
+              <text
+                x={padding - 20}
+                y={yScale(i) + 5}
+                fill="#fff"
+                fontSize={16}
+                textAnchor="end"
+              >
+                {i}
+              </text>
+            </g>
+          ))}
+          {/* Line connecting points */}
+          <polyline
+            fill="none"
+            stroke="#FFD700"
+            strokeWidth={4}
+            points={points.map(pt => `${pt.x},${pt.y}`).join(' ')}
+          />
+          {/* Points */}
+          {points.map((pt, idx) => (
+            <g key={idx}>
+              <circle cx={pt.x} cy={pt.y} r={10} fill="#FFD700" stroke="#fff" strokeWidth={3} />
+              <text
+                x={pt.x}
+                y={pt.y - 16}
+                fill="#fff"
+                fontSize={18}
+                textAnchor="middle"
+                fontWeight="bold"
+              >
+                {pt.place}
+              </text>
+            </g>
+          ))}
+          {/* X axis labels (years/leagues) at a slant, close to graph */}
+          {points.map((pt, idx) => (
+            <g key={idx}>
+              <text
+                x={pt.x + 10}
+                y={height - bottomExtra}
+                fill="#fff"
+                fontSize={16}
+                textAnchor="start"
+                transform={`rotate(-35,${pt.x - 5},${height - bottomExtra + 50})`}
+                style={{ pointerEvents: 'none' }}
+              >
+                {pt.year} {pt.league[0].toUpperCase()}
+              </text>
+            </g>
+          ))}
+        </svg>
+      </div>
       <h3 style={{ marginTop: 18, fontWeight: 500 }}>Playoff Finishes by Season</h3>
     </div>
   );
