@@ -187,7 +187,7 @@ function Home() {
             {season.year} {season.league.charAt(0).toUpperCase() + season.league.slice(1)}
           </h2>
           <ol style={{ listStyle: 'none', padding: 0 }}>
-            {season.results.sort((a, b) => a.place - b.place).map((result) => {
+            {season.results.sort((a, b) => a.place - b.place).map((result, idx) => {
               const team = teamMap[result.teamId];
               const ownerDisplay = team?.owner || result.teamId;
               const teamDisplay = result.teamName || "Unnamed Team";
@@ -226,6 +226,12 @@ function Home() {
                       <span style={{ fontSize: `calc(${fontSize} / 1.7)`, color: '#fff8', marginLeft: 6, verticalAlign: 'middle' }}>
                         {record}
                       </span>
+                      {/* Show Finals MVP if this is the champion and result.finalsMvp exists */}
+                      {result.place === 1 && result.finalsMVP && (
+                        <div style={{ fontSize: '1rem', color: '#FFD700', marginTop: 2 }}>
+                          Finals MVP: <span style={{ fontWeight: 500 }}>{result.finalsMVP}</span>
+                        </div>
+                      )}
                     </>
                   ) : (
                     <>
@@ -233,6 +239,11 @@ function Home() {
                       <span style={{ fontSize: `calc(${fontSize} / 1.7)`, color: '#fff8', marginLeft: 6, verticalAlign: 'middle' }}>
                         {record}
                       </span>
+                      {result.place === 1 && result.finalsMVP && (
+                        <div style={{ fontSize: '1rem', color: '#FFD700', marginTop: 2 }}>
+                          Finals MVP: <span style={{ fontWeight: 500 }}>{result.finalsMVP}</span>
+                        </div>
+                      )}
                     </>
                   )}
                 </li>
