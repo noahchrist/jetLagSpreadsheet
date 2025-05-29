@@ -70,12 +70,6 @@ function Home() {
       key: 'top3', 
       filter: x => x.top3 >= 4 // Require at least 4 playoff appearances (top 3 finishes)
     },
-    {
-      title: 'Mr. 2016 Warriors 🏀',
-      key: 'bestReg',
-      // Only include if best regular season win percentage is above 80%
-      filter: x => x.bestReg > 0.8
-    },
     { title: 'Mr. No Clothes No Money No Hoes 🫵😹', key: 'rings', desc: true, filter: x => x.rings === 0 },
   ];
 
@@ -137,24 +131,6 @@ function Home() {
                       {(() => {
                         const value = team[cat.key];
                         if (cat.key === 'winPct' || cat.key === 'playoffPct') {
-                          return ` (${(value * 100).toFixed(1)}%)`;
-                        }
-                        if (cat.key === 'bestReg') {
-                          // Find the season with the best regular season win percentage
-                          const entries = resultsByTeam[team.id];
-                          let bestEntry = null;
-                          let bestPct = 0;
-                          entries.forEach(e => {
-                            const total = (e.wins || 0) + (e.losses || 0);
-                            const pct = total > 0 ? (e.wins || 0) / total : 0;
-                            if (pct > bestPct) {
-                              bestPct = pct;
-                              bestEntry = e;
-                            }
-                          });
-                          if (bestEntry) {
-                            return ` (${bestEntry.year} ${bestEntry.league[0].toUpperCase()} - ${(bestPct * 100).toFixed(1)}%)`;
-                          }
                           return ` (${(value * 100).toFixed(1)}%)`;
                         }
                         if (cat.key === 'avgFinish' || cat.key === 'avgReg') {
@@ -226,7 +202,7 @@ function Home() {
                       <span style={{ fontSize: `calc(${fontSize} / 1.7)`, color: '#fff8', marginLeft: 6, verticalAlign: 'middle' }}>
                         {record}
                       </span>
-                      {/* Show Finals MVP if this is the champion and result.finalsMvp exists */}
+                      {/* Show Finals MVP if this is the champion and result.finalsMVP exists */}
                       {result.place === 1 && result.finalsMVP && (
                         <div style={{ fontSize: '1rem', color: '#FFD700', marginTop: 2 }}>
                           Finals MVP: <span style={{ fontWeight: 500 }}>{result.finalsMVP}</span>
