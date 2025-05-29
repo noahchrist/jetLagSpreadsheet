@@ -1,14 +1,25 @@
 import { useParams } from 'react-router-dom';
 import teams from '../data/teams.json';
 import leagueHistory from '../data/leagueHistory.json';
-import React from 'react';
+import React, { useState } from 'react';
 
 // Simple SVG line graph component
-function PlayoffFinishGraph({ results }) {
-  if (!results.length) return null;
+function PlayoffFinishGraph({ results, filter, selected }) {
+  // Filter results based on selected league type
+  const filteredResults = React.useMemo(() => {
+    if (filter === 'redraft') return results.filter(r => r.league === 'redraft');
+    if (filter === 'dynasty') return results.filter(r => r.league === 'dynasty');
+    return results;
+  }, [results, filter]);
+
+  if (!filteredResults.length) return (
+    <div style={{ color: '#fff', marginTop: 40, textAlign: 'center' }}>
+      No results for {selected.charAt(0).toUpperCase() + selected.slice(1)} seasons.
+    </div>
+  );
 
   // Map all finishes to a max of 12 (treat 13/14 as 12)
-  const normalizedFinishes = results.map(r =>
+  const normalizedFinishes = filteredResults.map(r =>
     r.place > 12 ? 12 : r.place
   );
 
@@ -16,21 +27,21 @@ function PlayoffFinishGraph({ results }) {
   const height = 420;
   const padding = 60;
   const bottomExtra = 50;
-  const width = Math.max(600, results.length * 60);
+  const width = Math.max(600, filteredResults.length * 60);
 
   // Y scale: 1st place at top, 12th at bottom
   const yScale = place => padding + ((place - 1) * ((height - bottomExtra - 2 * padding) / 11));
   // X scale: spread evenly across width
-  const xScale = idx => padding + idx * ((width - 2 * padding) / (results.length - 1 || 1));
+  const xScale = idx => padding + idx * ((width - 2 * padding) / (filteredResults.length - 1 || 1));
 
   // Points for the line
   const points = normalizedFinishes.map((place, idx) => ({
     x: xScale(idx),
     y: yScale(place),
-    label: results[idx].label,
-    year: results[idx].year,
-    league: results[idx].league,
-    place: results[idx].place,
+    label: filteredResults[idx].label,
+    year: filteredResults[idx].year,
+    league: filteredResults[idx].league,
+    place: filteredResults[idx].place,
   }));
 
   // Axis labels (1-12)
@@ -42,7 +53,7 @@ function PlayoffFinishGraph({ results }) {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        marginTop: 60,
+        marginTop: 40,
         marginBottom: 20,
         width: '100%',
         overflowX: 'auto',
@@ -118,7 +129,6 @@ function PlayoffFinishGraph({ results }) {
           ))}
         </svg>
       </div>
-      <h3 style={{ marginTop: 18, fontWeight: 500 }}>Playoff Finishes by Season</h3>
     </div>
   );
 }
@@ -204,6 +214,24 @@ function TeamPage() {
   // Count number of championships (place === 1)
   const numRings = allResults.filter(r => r.place === 1).length;
   const rings = numRings > 0 ? ' ' + '💍'.repeat(numRings) : '';
+  
+    // Add state for graph filter
+  const [graphFilter, setGraphFilter] = useState('both');
+
+  // Button styling
+  const buttonStyle = selected => ({
+    padding: '0.5rem 1.2rem',
+    margin: '0 0.5rem',
+    border: 'none',
+    borderRadius: 20,
+    background: selected ? '#FFD700' : '#fff2',
+    color: selected ? '#003366' : '#fff',
+    fontWeight: selected ? 700 : 400,
+    fontSize: '1.1rem',
+    cursor: 'pointer',
+    outline: selected ? '2px solid #FFD700' : 'none',
+    transition: 'background 0.15s, color 0.15s',
+  });
 
   return (
     <div
@@ -236,7 +264,28 @@ function TeamPage() {
           <strong>Avg Playoff Finish:</strong> {avgPlayoffFinish}
         </div>
       </div>
-      <PlayoffFinishGraph results={graphResults} />
+      {/* Toggle buttons for graph filter */}
+      <div style={{ display: 'flex', justifyContent: 'center', margin: '2.5rem 0 1.5rem 0' }}>
+        <button
+          style={buttonStyle(graphFilter === 'redraft')}
+          onClick={() => setGraphFilter('redraft')}
+        >
+          Redraft
+        </button>
+        <button
+          style={buttonStyle(graphFilter === 'dynasty')}
+          onClick={() => setGraphFilter('dynasty')}
+        >
+          Dynasty
+        </button>
+        <button
+          style={buttonStyle(graphFilter === 'both')}
+          onClick={() => setGraphFilter('both')}
+        >
+          Both
+        </button>
+      </div>
+      <PlayoffFinishGraph results={graphResults} filter={graphFilter} selected={graphFilter} />
     </div>
   );
 }

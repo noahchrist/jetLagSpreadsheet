@@ -161,6 +161,7 @@ function Home() {
         <section key={`${season.year}-${season.league}`} className="season-block" style={{ marginBottom: '2rem', textAlign: 'center' }}>
           <h2 style={{ fontSize: '2.25rem', marginBottom: '1rem' }}>
             {season.year} {season.league.charAt(0).toUpperCase() + season.league.slice(1)}
+            {season.year === 2021 ? '*' : ''}
           </h2>
           <ol style={{ listStyle: 'none', padding: 0 }}>
             {season.results.sort((a, b) => a.place - b.place).map((result, idx) => {
