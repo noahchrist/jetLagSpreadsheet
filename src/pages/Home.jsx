@@ -139,25 +139,29 @@ function Home() {
 
         return (
           <section key={cat.title} style={{ marginBottom: '2rem', textAlign: 'center' }}>
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: '#F5F5F5' }}>
-              {cat.title} 
-              <span style={{ color: '#fff8', fontWeight: 400, fontSize: '1rem' }}>// {subtitle}</span>
-              {hasMoreTeams && (
-                <button 
-                  onClick={() => toggleExpanded(cat.title)}
-                  style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    color: '#A5C3FF', 
-                    fontSize: '1.2rem', 
-                    cursor: 'pointer',
-                    padding: '0 0.25rem'
-                  }}
-                >
-                  ({isExpanded ? '-' : '+'})
-                </button>
-              )}
-            </h3>
+            <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
+              <h3 style={{ fontSize: '1.5rem', margin: 0, color: '#F5F5F5' }}>
+                {cat.title}
+              </h3>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginTop: '0.25rem' }}>
+                <span style={{ color: '#fff8', fontWeight: 400, fontSize: '1rem' }}>{subtitle}</span>
+                {hasMoreTeams && (
+                  <button 
+                    onClick={() => toggleExpanded(cat.title)}
+                    style={{ 
+                      background: 'none', 
+                      border: 'none', 
+                      color: '#A5C3FF', 
+                      fontSize: '1.2rem', 
+                      cursor: 'pointer',
+                      padding: '0 0.25rem'
+                    }}
+                  >
+                    ({isExpanded ? '-' : '+'})
+                  </button>
+                )}
+              </div>
+            </div>
             <ol style={{ listStyle: 'none', padding: 0 }}>
               {(isExpanded ? allTeams : topTeams).map((team, i, arr) => {
                 // For "most rings" and "least rings" categories, remove indexes if tied
