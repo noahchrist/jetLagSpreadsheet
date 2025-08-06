@@ -131,9 +131,11 @@ function Home() {
         else if (cat.key === 'rings' && cat.title.includes('No Clothes')) subtitle = 'Zero Rings';
 
         const isExpanded = expandedCategories[cat.title];
-        const topTeams = sortAndFormat(cat.key, cat.desc !== false, () => true, 3);
+        const topTeams = cat.title.includes('No Clothes') 
+          ? getAllQualifying(cat.key, cat.desc !== false, cat.filter)
+          : sortAndFormat(cat.key, cat.desc !== false, () => true, 3);
         const allTeams = getAllQualifying(cat.key, cat.desc !== false, cat.expandedFilter || cat.filter || (() => true));
-        const hasMoreTeams = allTeams.length > 3;
+        const hasMoreTeams = !cat.title.includes('No Clothes') && allTeams.length > 3;
 
         return (
           <section key={cat.title} style={{ marginBottom: '2rem', textAlign: 'center' }}>
