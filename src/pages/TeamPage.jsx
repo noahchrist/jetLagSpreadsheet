@@ -139,8 +139,8 @@ function TeamPage() {
 
   if (!team) {
     return (
-      <div className="container" style={{ backgroundColor: '#0047AB', color: 'white', minHeight: '100vh', padding: '2rem' }}>
-        <h2 style={{ textAlign: 'center' }}>Team not found</h2>
+      <div className="container" style={{ background: 'linear-gradient(to right, #001f3f, #FFD700)', color: '#F5F5F5', minHeight: '100vh', padding: '2rem' }}>
+        <h2 style={{ textAlign: 'center', color: '#F5F5F5' }}>Team not found</h2>
       </div>
     );
   }
@@ -237,16 +237,16 @@ function TeamPage() {
     <div
       className="container"
       style={{
-        backgroundColor: '#0047AB',
-        color: 'white',
+        background: 'linear-gradient(to right, #001f3f, #FFD700)',
+        color: '#F5F5F5',
         minHeight: '100vh',
         padding: '2rem',
       }}
     >
-      <h1 style={{ textTransform: 'uppercase', fontSize: '3rem', textAlign: 'center', marginBottom: '1.5rem' }}>
+      <h1 style={{ textTransform: 'uppercase', fontSize: '3rem', textAlign: 'center', marginBottom: '1.5rem', color: '#F5F5F5' }}>
         {team.owner}{rings}
       </h1>
-      <h2 style={{ textAlign: 'center', marginBottom: '2.5rem' }}>{teamNames}</h2>
+      <h2 style={{ textAlign: 'center', marginBottom: '2.5rem', color: '#F5F5F5' }}>{teamNames}</h2>
       <div style={{ maxWidth: 400, margin: '0 auto', textAlign: 'left' }}>
         <div style={{ marginBottom: '1rem', fontSize: '1.2rem' }}>
           <strong>Seasons played:</strong> {seasonsPlayed} {seasonsPlayed > 0 && `(${minYear} - ${maxYear})`}

@@ -2,6 +2,7 @@
 import teams from '../data/teams.json';
 import leagueHistory from '../data/leagueHistory.json';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import './Home.css';
 
 const teamMap = Object.fromEntries(teams.map(team => [team.id, team]));
@@ -18,6 +19,11 @@ const sortedHistory = [...leagueHistory].sort((a, b) => {
 });
 
 function Home() {
+  const [expandedCategories, setExpandedCategories] = useState(() => {
+    const saved = sessionStorage.getItem('expandedCategories');
+    return saved ? JSON.parse(saved) : {};
+  });
+  
   // Flattened and grouped results by team
   const resultsByTeam = {};
   let totalSeasons = 0;
@@ -50,25 +56,43 @@ function Home() {
     return { winPct, playoffPct, avgFinish, avgReg, avgDelta, rings, top3, bestReg };
   };
 
-  const sortAndFormat = (key, desc = true, filter = () => true) => {
+  const sortAndFormat = (key, desc = true, filter = () => true, limit = 3) => {
     return eligibleTeams
       .map(([id, entries]) => ({ id, ...calcStats(entries), owner: teamMap[id]?.owner }))
       .filter(filter)
       .sort((a, b) => desc ? b[key] - a[key] : a[key] - b[key])
-      .slice(0, 5);
+      .slice(0, limit);
+  };
+
+  const getAllQualifying = (key, desc = true, filter = () => true) => {
+    return eligibleTeams
+      .map(([id, entries]) => ({ id, ...calcStats(entries), owner: teamMap[id]?.owner }))
+      .filter(filter)
+      .sort((a, b) => desc ? b[key] - a[key] : a[key] - b[key]);
+  };
+
+  const toggleExpanded = (categoryTitle) => {
+    setExpandedCategories(prev => {
+      const newState = {
+        ...prev,
+        [categoryTitle]: !prev[categoryTitle]
+      };
+      sessionStorage.setItem('expandedCategories', JSON.stringify(newState));
+      return newState;
+    });
   };
 
   const categories = [
-    { title: 'Mr. GOAT 🐐', key: 'avgFinish', desc: false },
-    { title: 'Mr. Winner Winner Chicken Dinner 🍗', key: 'winPct' },
-    { title: 'Mr. Playoff Perennial 📈', key: 'playoffPct', filter: x => x.playoffPct > 0.5 },
-    { title: 'Mr. Postseason 🔥', key: 'avgDelta', filter: x => x.avgDelta > 0 },
-    { title: 'Mr. Meltdown 😬', key: 'avgDelta', desc: false, filter: x => x.avgDelta < 0 },
+    { title: 'Mr. GOAT 🐐', key: 'avgFinish', desc: false, expandedFilter: () => true },
+    { title: 'Mr. Winner Winner Chicken Dinner 🍗', key: 'winPct', expandedFilter: () => true },
+    { title: 'Mr. Playoff Perennial 📈', key: 'playoffPct', expandedFilter: () => true },
+    { title: 'Mr. Postseason 🔥', key: 'avgDelta', expandedFilter: x => x.avgDelta > 0 },
+    { title: 'Mr. Meltdown 😬', key: 'avgDelta', desc: false, expandedFilter: x => x.avgDelta <= 0 },
     { title: 'Mr. Bust Down 💍', key: 'rings', filter: x => x.rings >= 2 },
     { 
       title: 'Mr. Podium 🏆', 
       key: 'top3', 
-      filter: x => x.top3 >= 4 // Require at least 4 playoff appearances (top 3 finishes)
+      expandedFilter: x => x.top3 > 0
     },
     { title: 'Mr. No Clothes No Money No Hoes 🫵😹', key: 'rings', desc: true, filter: x => x.rings === 0 },
   ];
@@ -88,11 +112,11 @@ function Home() {
   };
 
   return (
-    <div className="container" style={{ backgroundColor: '#0047AB', color: 'white', minHeight: '100vh', padding: '2rem' }}>
-      <h1 style={{ textAlign: 'center', fontSize: '3rem', marginBottom: '2rem' }}>THIS LEAGUE.</h1>
+    <div className="container" style={{ background: 'linear-gradient(to right, #001f3f, #FFD700)', color: '#F5F5F5', minHeight: '100vh', padding: '2rem' }}>
+      <h1 style={{ textAlign: 'center', fontSize: '4.6875rem', marginBottom: '2rem', color: '#F5F5F5' }}>THIS LEAGUE.</h1>
 
       {/* --- LEAGUE LEADERBOARD FIRST --- */}
-      <h2 style={{ textAlign: 'center', fontSize: '2rem', marginBottom: '1rem' }}>🏅 League Leaderboard</h2>
+      <h2 style={{ textAlign: 'center', fontSize: '2rem', marginBottom: '1rem', color: '#F5F5F5' }}>🏅 League Leaderboard</h2>
       {categories.map(cat => {
         // Map category key/title to subtitle
         let subtitle = '';
@@ -106,13 +130,34 @@ function Home() {
         else if (cat.key === 'bestReg') subtitle = 'Best Regular Season';
         else if (cat.key === 'rings' && cat.title.includes('No Clothes')) subtitle = 'Zero Rings';
 
+        const isExpanded = expandedCategories[cat.title];
+        const topTeams = sortAndFormat(cat.key, cat.desc !== false, () => true, 3);
+        const allTeams = getAllQualifying(cat.key, cat.desc !== false, cat.expandedFilter || cat.filter || (() => true));
+        const hasMoreTeams = allTeams.length > 3;
+
         return (
           <section key={cat.title} style={{ marginBottom: '2rem', textAlign: 'center' }}>
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
-              {cat.title} <span style={{ color: '#fff8', fontWeight: 400, fontSize: '1rem' }}>// {subtitle}</span>
+            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: '#F5F5F5' }}>
+              {cat.title} 
+              <span style={{ color: '#fff8', fontWeight: 400, fontSize: '1rem' }}>// {subtitle}</span>
+              {hasMoreTeams && (
+                <button 
+                  onClick={() => toggleExpanded(cat.title)}
+                  style={{ 
+                    background: 'none', 
+                    border: 'none', 
+                    color: '#A5C3FF', 
+                    fontSize: '1.2rem', 
+                    cursor: 'pointer',
+                    padding: '0 0.25rem'
+                  }}
+                >
+                  ({isExpanded ? '-' : '+'})
+                </button>
+              )}
             </h3>
             <ol style={{ listStyle: 'none', padding: 0 }}>
-              {sortAndFormat(cat.key, cat.desc !== false, cat.filter).map((team, i, arr) => {
+              {(isExpanded ? allTeams : topTeams).map((team, i, arr) => {
                 // For "most rings" and "least rings" categories, remove indexes if tied
                 const isRingsCat =
                   cat.key === 'rings' &&
@@ -124,7 +169,7 @@ function Home() {
                 return (
                   <li key={team.id} style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>
                     {!allSameRings ? `${i + 1}. ` : ''}
-                    <Link to={`/team/${team.id}`} style={{ color: 'yellow', textDecoration: 'none', fontWeight: 'bold' }}>
+                    <Link to={`/team/${team.id}`} style={{ color: '#A5C3FF', textDecoration: 'none', fontWeight: 'bold' }}>
                       {team.owner}
                     </Link>
                     <span style={{ color: '#fff8', marginLeft: 8 }}>
@@ -154,12 +199,12 @@ function Home() {
         );
       })}
 
-      <hr style={{ borderColor: 'white', margin: '3rem 0' }} />
+      <hr style={{ borderColor: '#F5F5F5', margin: '3rem 0' }} />
 
       {/* --- LEAGUE HISTORY SECOND --- */}
       {sortedHistory.map((season) => (
         <section key={`${season.year}-${season.league}`} className="season-block" style={{ marginBottom: '2rem', textAlign: 'center' }}>
-          <h2 style={{ fontSize: '2.25rem', marginBottom: '1rem' }}>
+          <h2 style={{ fontSize: '2.25rem', marginBottom: '1rem', color: '#F5F5F5' }}>
             {season.year} {season.league.charAt(0).toUpperCase() + season.league.slice(1)}
             {season.year === 2021 ? '*' : ''}
           </h2>
@@ -196,7 +241,7 @@ function Home() {
                     <>
                       <Link
                         to={link}
-                        style={{ color: 'yellow', textDecoration: 'none', fontWeight: 'bold' }}
+                        style={{ color: '#A5C3FF', textDecoration: 'none', fontWeight: 'bold' }}
                       >
                         {ownerDisplay} - {teamDisplay}
                       </Link>
